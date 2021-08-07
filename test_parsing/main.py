@@ -1,8 +1,17 @@
 from bs4 import BeautifulSoup
-import requests
+from requests import get
 
 
+URL = "https://www.whiskishop.com/collections/whisky-types-single-malt?page=1"
 
+HEADERS = {
+    "user agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+}
+
+
+def get_html(url, params=None):
+    return get(url, headers=HEADERS, params=None)
 
 
 def main():
