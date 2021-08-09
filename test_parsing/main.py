@@ -70,10 +70,10 @@ def get_content(html):
 
 def save_file(data: list, filename: str):
     with open(filename, "w", encoding="UTF-8", newline="") as file:
-        writer = csv.writer(file, delimeter=";")
+        writer = csv.writer(file, delimiter=";")
         writer.writerow(["Наименование", "Цена в фунтах", "Ссылка"])
         for item in data:
-            writer.writerow(item["title"], item["cost"], item["link"])
+            writer.writerow([item["title"], item["cost"], item["link"]])
 
 
 def main():
