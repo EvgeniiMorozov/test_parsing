@@ -8,6 +8,7 @@ authors = ["EvgeniiMorozov <emorozov1101@gmail.com>"]
 python = "^3.9"
 requests = "^2.26.0"
 beautifulsoup4 = "^4.9.3"
+aiohttp = "^3.7.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
