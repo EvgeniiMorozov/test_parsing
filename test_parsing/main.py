@@ -1,4 +1,5 @@
 import csv
+import json
 
 from bs4 import BeautifulSoup
 import requests
@@ -85,9 +86,12 @@ def main():
     if html.status_code == 200:
         result = []
         pages = get_pages_count(html.text)
+
         for page in range(1, pages + 1):
             print(f"Парсим страницу {page} из {pages}...")
-            html = get_html(URL, params={"page": page})
+            url = URL + f"?page={page}"
+            html = get_html(url)
+            print(html.url)
             result.extend(get_content(html.text))
 
         print(f"Получено {len(result)} наименований")
