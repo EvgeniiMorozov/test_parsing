@@ -1,5 +1,7 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import csv
+from typing import Coroutine
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
@@ -11,12 +13,13 @@ async get & fetch_content, multithread parse, save results
 """
 
 
-async def get_html(session: ClientSession, page: int) -> str:
+async def get_html(session: ClientSession, page: int) -> Coroutine:
     url = URL + f"?page={page}"
     async with session.get(url=url, headers=HEADERS) as response:
-        if response.status == 200:
-            print(f"Получаю данные с {url}")
-            return response.text()
+        if response.status != 200:
+            print(f"Что-то пошло не так! {response.status=}")
+        print(f"Получаю данные с {url}")
+        return response.text()
 
 
 async def fetch_content() -> list[str]:
@@ -33,7 +36,7 @@ async def fetch_content() -> list[str]:
             task = asyncio.create_task(get_html(session, page))
             tasks.append(task)
 
-        await asyncio.gather(*tasks)
+        return await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
