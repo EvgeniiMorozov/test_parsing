@@ -31,7 +31,7 @@ async def fetch_content() -> list[str]:
 
         for page in range(1, pages_count + 1):
             task = asyncio.create_task(get_html(session, page))
-            task.append(task)
+            tasks.append(task)
 
         await asyncio.gather(*tasks)
 
