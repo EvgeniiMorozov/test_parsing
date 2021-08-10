@@ -43,16 +43,21 @@ def get_content(html):
     soup = BeautifulSoup(html, "html.parser")
 
     # Задаём параметры поиска - div и  его class
-
     # Так не работает
     # items = soup.find_all("div", class_="product-container")
-    # Так работает
+    # Так работает (надо задавать полное имя класса)
     items = soup.find_all("div", class_="product-container text-left product-block")
-    # Проверим, что на выходе будет
+    """
+    Метод find_all() отдает список строк и ниже по этому списку мы будем итерировать
+    """
     # print(items)
-    # создаём список, куда будем складывать результаты парсинга
     products = []
     for item in items:
+        """
+        Список items представляет собой список строк, каждая строка это контент из определённой карточки товара.
+        В каждой строке мы ищем интересующую нас информацию и записываем в отдельный словарь, далее этот словарь
+        складываем результирующий список.
+        """
         products.append(
             {
                 "title": item.find("h5", class_="name").get_text(strip=True),
@@ -69,7 +74,11 @@ def get_content(html):
 
 
 def save_file(data: list, filename: str):
+    """
+    Сохраняет данные в csv-формате
+    """
     with open(filename, "w", encoding="UTF-8", newline="") as file:
+        # Чтоб полученный открылся в Exel`е, не обходимо указать разделитель ';'
         writer = csv.writer(file, delimiter=";")
         writer.writerow(["Наименование", "Цена в фунтах", "Ссылка"])
         for item in data:
@@ -88,6 +97,7 @@ def main():
 
         for page in range(1, pages + 1):
             print(f"Парсим страницу {page} из {pages}...")
+            # Для каждой страницы формируем url-ссылку
             url = URL + f"?page={page}"
             html = get_html(url)
             print(html.url)
