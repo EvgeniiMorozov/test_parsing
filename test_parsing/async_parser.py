@@ -21,7 +21,19 @@ async def get_html(session: ClientSession, page: int) -> str:
 
 async def fetch_content() -> list[str]:
     async with ClientSession() as session:
-        response = await session
+        response = await session.get(url=URL, headers=HEADERS)
+        # Важно помнить, библиотека  BS4 не асинхронная !!!
+        soup = BeautifulSoup(await response.text(), "html.parser")
+        num = soup.find("li", class_="pagination_next").find_previous("li").find("a").get_text()
+        pages_count = int(num) if num else 1
+
+        tasks = []
+
+        for page in range(1, pages_count + 1):
+            task = asyncio.create_task(get_html(session, page))
+            task.append(task)
+
+        await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
