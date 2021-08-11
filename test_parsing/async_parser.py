@@ -6,6 +6,7 @@ from typing import Coroutine
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from stuff import HEADERS, HOST, URL
+from main import get_content, save_file
 
 
 """
@@ -40,11 +41,16 @@ async def fetch_content() -> list[str]:
         return await asyncio.gather(*tasks)
 
 
-def main():
-    pass
+def parse(data: list[str]):
+    encoding_data: list[dict] = []
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        future = executor.submit(get_content([chunk for chunk in data]))
+        encoding_data.extend(future.result())
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(fetch_content())
     print(len(fetching_data))
+    result = parse(fetching_data)
+    print(result)
