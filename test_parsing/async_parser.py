@@ -13,7 +13,7 @@ async get & fetch_content, multithread parse, save results
 """
 fetching_data: list[str] = []
 
-async def get_html(session: ClientSession, page: int) -> Coroutine:
+async def get_html(session: ClientSession, page: int):
     url = URL + f"?page={page}"
     async with session.get(url=url, headers=HEADERS) as response:
         if response.status != 200:
@@ -21,8 +21,6 @@ async def get_html(session: ClientSession, page: int) -> Coroutine:
         print(f"Получаю данные с {url}")
         response_text = await response.text()
         fetching_data.append(response_text)
-
-        return response.text()
 
 
 async def fetch_content() -> list[str]:
