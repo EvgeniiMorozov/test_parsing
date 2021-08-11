@@ -11,7 +11,7 @@ from stuff import HEADERS, HOST, URL
 """
 async get & fetch_content, multithread parse, save results
 """
-
+fetching_data: list[str] = []
 
 async def get_html(session: ClientSession, page: int) -> Coroutine:
     url = URL + f"?page={page}"
@@ -19,6 +19,9 @@ async def get_html(session: ClientSession, page: int) -> Coroutine:
         if response.status != 200:
             print(f"Что-то пошло не так! {response.status=}")
         print(f"Получаю данные с {url}")
+        response_text = await response.text()
+        fetching_data.append(response_text)
+
         return response.text()
 
 
@@ -39,5 +42,11 @@ async def fetch_content() -> list[str]:
         return await asyncio.gather(*tasks)
 
 
+def main():
+    pass
+
+
 if __name__ == "__main__":
-    ...
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(fetch_content())
+    print(len(fetching_data))
