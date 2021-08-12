@@ -51,6 +51,8 @@ def parse(data: list[str]):
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(fetch_content())
+    with open("test.txt", "w", encoding="utf-8") as f:
+        f.writelines(fetching_data)
     print(len(fetching_data))
-    result = parse(fetching_data)
-    print(result)
+    # result = parse(fetching_data)
+    # print(result)
