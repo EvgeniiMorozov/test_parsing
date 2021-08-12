@@ -22,6 +22,7 @@ async def get_html(session: ClientSession, page: int):
         print(f"Получаю данные с {url}")
         response_text = await response.text()
         fetching_data.append(response_text)
+        return response_text
 
 
 async def fetch_content() -> list[str]:
