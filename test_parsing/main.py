@@ -1,6 +1,8 @@
 import csv
 
 from bs4 import BeautifulSoup
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 import requests
 
 
@@ -85,6 +87,26 @@ def save_file(data: list, filename: str):
             writer.writerow([item["title"], item["cost"], item["link"]])
 
 
+def save_to_xlsx(data: list, filename: str):
+    book = Workbook()
+    sheet = book.active
+    sheet.title = "Parse_results"
+    sheet["A1"] = "Наименование"
+    sheet["B1"] = "Цена в фунтах"
+    sheet["C1"] = "Ссылка на продукт"
+
+    for row, chunk in enumerate(data, start=2):
+        sheet[row][0].value = chunk["title"]
+        sheet[row][1].value = chunk["cost"]
+        sheet[row][2].value = chunk["link"]
+
+    book.save(filename)
+    book.close()
+
+
+
+
+
 def main():
     html = get_html(URL)
     # print(html)
@@ -105,7 +127,8 @@ def main():
 
         print(f"Получено {len(result)} наименований")
 
-        save_file(result, "result.csv")
+        save_file(result, "result_csv.csv")
+        save_to_xlsx(result, "result_excel.xlsx")
     else:
         print(f"Что-то пошло не так! {html.status_code=}")
 
