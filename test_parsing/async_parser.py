@@ -5,14 +5,17 @@ from typing import Coroutine
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
+from main import save_to_xlsx
 from stuff import HEADERS, HOST, URL
-from main import get_content, save_file
+
+# from main import get_content, save_file
 
 
 """
 async get & fetch_content, multithread parse, save results
 """
 fetching_data: list[str] = []
+
 
 async def get_html(session: ClientSession, page: int):
     url = URL + f"?page={page}"
@@ -42,18 +45,33 @@ async def fetch_content() -> list[str]:
         return await asyncio.gather(*tasks)
 
 
+def get_content(html):
+    soup = BeautifulSoup(html, "html.parser")
+    items = soup.find_all("div", class_="product-container text-left product-block")
+    products = []
+    for item in items:
+        products.append(
+            {
+                "title": item.find("h5", class_="name").get_text(strip=True),
+                "cost": item.find("span", class_="money").get_text(strip=True),
+                "link": HOST + item.find("a", class_="product-name").get("href"),
+            }
+        )
+    return products
+
+
 def parse(data: list[str]):
     encoding_data: list[dict] = []
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        future = executor.submit(get_content([chunk for chunk in data]))
-        encoding_data.extend(future.result())
+    with ThreadPoolExecutor() as executor:
+        for chunk in data:
+            future = executor.submit(get_content, chunk)
+            encoding_data.extend(future.result())
+    return encoding_data
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(fetch_content())
-    with open("test.txt", "w", encoding="utf-8") as f:
-        f.writelines(fetching_data)
     print(len(fetching_data))
-    # result = parse(fetching_data)
-    # print(result)
+    result = parse(fetching_data)
+    save_to_xlsx(result, "async_result.xlsx")
