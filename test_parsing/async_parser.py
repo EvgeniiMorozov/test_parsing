@@ -1,18 +1,14 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import csv
-from typing import Coroutine
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from main import save_to_xlsx
 from stuff import HEADERS, HOST, URL
 
-# from main import get_content, save_file
-
 
 """
-async get & fetch_content, multithread parse, save results
+async get-request & fetch_content, multithread parse, save results
 """
 fetching_data: list[str] = []
 
@@ -48,16 +44,15 @@ async def fetch_content() -> list[str]:
 def get_content(html):
     soup = BeautifulSoup(html, "html.parser")
     items = soup.find_all("div", class_="product-container text-left product-block")
-    products = []
-    for item in items:
-        products.append(
-            {
-                "title": item.find("h5", class_="name").get_text(strip=True),
-                "cost": item.find("span", class_="money").get_text(strip=True),
-                "link": HOST + item.find("a", class_="product-name").get("href"),
-            }
-        )
-    return products
+
+    return [
+        {
+            "title": item.find("h5", class_="name").get_text(strip=True),
+            "cost": item.find("span", class_="money").get_text(strip=True),
+            "link": HOST + item.find("a", class_="product-name").get("href"),
+        }
+        for item in items
+    ]
 
 
 def parse(data: list[str]):
@@ -66,6 +61,7 @@ def parse(data: list[str]):
         for chunk in data:
             future = executor.submit(get_content, chunk)
             encoding_data.extend(future.result())
+
     return encoding_data
 
 
