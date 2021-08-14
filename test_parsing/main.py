@@ -4,18 +4,7 @@ from bs4 import BeautifulSoup
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 import requests
-
-
-# URL = "https://www.whiskishop.com/collections/whisky-types-single-malt?page=1"
-URL = "https://www.whiskishop.com/collections/whisky-types-single-malt"
-# URL = "https://www.whiskishop.com/collections/scotch-whisky-highland"
-
-HEADERS = {
-    "user agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-}
-
-HOST = "https://www.whiskishop.com"
+from stuff import HEADERS, HOST, URL
 
 
 def get_html(url, params=None):
@@ -88,19 +77,26 @@ def save_file(data: list, filename: str):
 
 
 def save_to_xlsx(data: list, filename: str):
+    # создаём объект книги Excel
     book = Workbook()
+    # выбираем лист книги
     sheet = book.active
+    # "обзываем" его
     sheet.title = "Parse_results"
+    # Делаем оглавление шапки таблицы результатов
     sheet["A1"] = "Наименование"
     sheet["B1"] = "Цена в фунтах"
     sheet["C1"] = "Ссылка на продукт"
 
+    # заполняем таблицу данными
     for row, chunk in enumerate(data, start=2):
         sheet[row][0].value = chunk["title"]
         sheet[row][1].value = chunk["cost"]
         sheet[row][2].value = chunk["link"]
 
+    # сохраняем файл
     book.save(filename)
+    # закрываем книгу Excel
     book.close()
 
 
@@ -127,6 +123,7 @@ def main():
 
         print(f"Получено {len(result)} наименований")
 
+        # Сохраняем результаты
         save_file(result, "result_csv.csv")
         save_to_xlsx(result, "result_excel.xlsx")
     else:
