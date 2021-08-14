@@ -53,8 +53,6 @@ def get_content(html):
             {
                 "title": item.find("h5", class_="name").get_text(strip=True),
                 "cost": item.find("span", class_="money").get_text(strip=True),
-                # "rating": item.find("span", class_="spr-badge").get("data-rating"),
-                # "review": item.found("span", class_="spr-badge-caption").get_text(strip=True),
                 "link": HOST + item.find("a", class_="product-name").get("href"),
             }
         )
