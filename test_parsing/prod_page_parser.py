@@ -72,6 +72,12 @@ def get_content(html):
     price = price_soup.find("span", class_="price-block__final-price").get_text(strip=True)
 
     # details_soup
+    description_text = details_soup.find("p", class_="collapsable__text").get_text()
+    details_table = details_soup.find("div", class_="product-params")
+    table_rows = details_table.find_all("tr", class_="product-params__row")
+    specification_dict = {}
+    for row in table_rows:
+        ...
 
 
 
